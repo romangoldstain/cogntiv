@@ -7,6 +7,7 @@ from producer.dispatcher import Dispatcher
 
 
 if __name__ == '__main__':
+
     bus = queue.Queue(100)
 
     faucet = VectorFaucet(VectorFactory(), bus)

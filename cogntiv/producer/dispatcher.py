@@ -27,26 +27,31 @@ class Dispatcher:
 
     def _poll_and_dispatch(self):
 
-        unsent = None
+        unsent_msg = None
 
         while self.running:
 
             self.transfer.wait_for_ready()
             self.monitor.reset()
+            # dont reset message sequence
 
             last_sent_at = 0
 
             while self.running:
 
-                if unsent is None:
+                if unsent_msg is None:
                     data = self.bus.get()
                     msg = Message(self.nextMessageSeq, data)
                 else:
-                    msg = unsent
-                    unsent = None
+                    msg = unsent_msg
+                    unsent_msg = None
+
+                # Upon packet loss, utilize message's time slot. Remote consumer is expected
+                # to experience gap in the input stream.
 
                 now = time.perf_counter()
                 if now - last_sent_at >= 0.001:
+
                     success = self.transfer.send(msg)
                     self.monitor.add_event()
 
@@ -61,7 +66,7 @@ class Dispatcher:
                         print(f"sent #{self.nextMessageSeq} at {self.monitor.get_avg_rate_per_sec()} msg/sec")
 
                 else:
-                    unsent = msg
+                    unsent_msg = msg
                     if not self.transfer.is_ready():
                         break
 
