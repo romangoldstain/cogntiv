@@ -5,14 +5,12 @@ from common.message import Message
 
 class Dispatcher:
 
-    def __init__(self, transfer, vector_bus):
+    def __init__(self, transfer, monitor, bus):
         self.transfer = transfer
-        self.vector_bus = vector_bus
+        self.monitor = monitor
+        self.bus = bus
         self.running = False
         self.nextMessageSeq = 1
-        # stats
-        self.sentCount = 0
-        self.totalDurationInSec = 0
 
     def start(self):
         if self.running:
@@ -34,38 +32,41 @@ class Dispatcher:
         while self.running:
 
             self.transfer.wait_for_ready()
-            start_time = time.perf_counter()
+            self.monitor.reset()
+
+            last_sent_at = 0
 
             while self.running:
 
                 if unsent is None:
-                    vector = self.vector_bus.get()
-                    msg = Message(self.nextMessageSeq, vector)
+                    data = self.bus.get()
+                    msg = Message(self.nextMessageSeq, data)
                 else:
                     msg = unsent
                     unsent = None
 
-                success = self.transfer.send(msg)
+                now = time.perf_counter()
+                if now - last_sent_at >= 0.001:
+                    success = self.transfer.send(msg)
+                    self.monitor.add_event()
+
+                    last_sent_at = now
+                else:
+                    success = False
+
                 if success:
 
-                    now = time.perf_counter()
-
                     self.nextMessageSeq += 1
-
-                    # update stats
-                    self.sentCount += 1
-                    self.totalDurationInSec = now - start_time
-
-                    if self.sentCount % 5 == 0:
-                        print(f"sent #{self.nextMessageSeq} at {self.sentCount / self.totalDurationInSec} msg/sec")
+                    if self.nextMessageSeq % 5 == 0:
+                        print(f"sent #{self.nextMessageSeq} at {self.monitor.get_avg_rate_per_sec()} msg/sec")
 
                 else:
                     unsent = msg
                     if not self.transfer.is_ready():
                         break
 
-                self.vector_bus.task_done()  # The vector is out of the bus any way
-                time.sleep(1)
+                # self.bus.task_done()  # The vector is out of the bus any way
+                # time.sleep(0.2)
 
 
 """

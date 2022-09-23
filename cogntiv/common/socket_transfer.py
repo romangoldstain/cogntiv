@@ -4,20 +4,22 @@ from multiprocessing.connection import Listener
 class SocketTransfer:
 
     def __init__(self, address, port):
-        self.address = (address, port)  # family is deduced to be 'AF_INET'
         self.conn = None
         self.listener = None
         self.isClosed = False
+        self.listener = Listener((address, port))
 
     def wait_for_ready(self):
+
         print("Waiting for connection...")
-        self.listener = Listener(self.address)
+
         try:
             self.conn = self.listener.accept()
             print('Connection accepted from', self.listener.last_accepted)
         except OSError:
             if not self.isClosed:
                 print("Exception while accepting new connection")
+                self.listener.close()
             # else - that's fine, the transfer was explicitly closed.
 
     def close(self):

@@ -3,9 +3,9 @@ import threading
 
 class VectorFaucet:
 
-    def __init__(self, vector_factory, vector_bus):
+    def __init__(self, vector_factory, bus):
         self.vector_factory = vector_factory
-        self.vector_bus = vector_bus
+        self.bus = bus
         self.running = False
 
     def start(self):
@@ -23,4 +23,4 @@ class VectorFaucet:
     def _streamout(self):
         while self.running:
             vector = self.vector_factory.create()
-            self.vector_bus.put(vector)
+            self.bus.put(vector)
