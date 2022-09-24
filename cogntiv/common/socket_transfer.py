@@ -1,13 +1,16 @@
+import time
 from multiprocessing.connection import Listener
 
 
 class SocketTransfer:
 
-    def __init__(self, address, port):
-        self.conn = None
-        self.listener = None
-        self.isClosed = False
+    def __init__(self, address, port, loss_policy):
         self.listener = Listener((address, port))
+        self.loss_policy = loss_policy
+        self.conn = None
+        self.isClosed = False
+        self.connected_at = None
+        self.loss_count = 0
 
     def wait_for_ready(self):
 
@@ -15,6 +18,7 @@ class SocketTransfer:
 
         try:
             self.conn = self.listener.accept()
+            self.connected_at = time.perf_counter()
             print('Connection accepted from', self.listener.last_accepted)
         except OSError:
             if not self.isClosed:
@@ -25,11 +29,16 @@ class SocketTransfer:
     def close(self):
         if not self.isClosed:
             self.isClosed = True
-            self.listener.close()
+            self.listener.close()  # can throw?
 
     def send(self, message):
         if self.conn is None:
             raise RuntimeError("Connection was not established.")
+
+        if self.loss_policy.should_loose():
+            self.loss_count += 1
+            print(f'Packet loss :( so far - {self.loss_count} messages lost')
+            return True
 
         try:
             self.conn.send(message)
