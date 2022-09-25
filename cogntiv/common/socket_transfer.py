@@ -1,5 +1,6 @@
 import time
 from multiprocessing.connection import Listener
+from multiprocessing.connection import Client
 
 
 class SocketTransfer:
@@ -47,6 +48,48 @@ class SocketTransfer:
             print("Connection broken :(")
             self.conn = None
             return False
+
+    def is_ready(self):
+        return self.conn is not None
+
+
+class SocketTransferClient:
+
+    def __init__(self, address, port):
+        self.address = (address, port)
+        self.conn = None
+        self.isClosed = False
+        self.connected_at = None
+        self.loss_count = 0
+
+    def wait_for_ready(self):
+
+        print("Connecting...")
+
+        try:
+            self.conn = Client(self.address)
+            self.connected_at = time.perf_counter()
+            print('Connection established.')
+        except OSError:
+            if not self.isClosed:
+                print("Exception while accepting new connection")
+            # else - that's fine, the transfer was explicitly closed.
+
+    def close(self):
+        if not self.isClosed:
+            self.isClosed = True
+            self.conn.close()  # can throw?
+
+    def read(self):
+        if self.conn is None:
+            raise RuntimeError("Connection was not established.")
+
+        try:
+            return self.conn.recv()
+        except ConnectionResetError:
+            print("Connection broken :(")
+            self.conn = None
+            return None
 
     def is_ready(self):
         return self.conn is not None

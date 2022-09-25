@@ -4,7 +4,7 @@ import time
 class RateMonitor:
 
     def __init__(self):
-        self.start_time = None
+        self.start_time = time.perf_counter()
         self.event_count = 0
 
     def reset(self):

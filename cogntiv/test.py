@@ -1,22 +1,16 @@
 import queue
 import time
 
+import numpy as np
+
 if __name__ == '__main__':
-    start = time.perf_counter()
-    i = 0
-    while time.perf_counter() - start < 0.001:
-        i += 1
+    a1 = np.random.default_rng().random(2)
+    a2 = np.random.default_rng().random(2)
+    a3 = np.random.default_rng().random(2)
 
-    before = time.perf_counter()
-    for j in range(9000):
-        time.perf_counter()
-    after = time.perf_counter()
-
-    print(f'i={i}')
-    print(f'i={after - before}')
+    cc = np.array(a1)
 
 
-
-"""
-https://www.webucator.com/article/python-clocks-explained/
-"""
+    m1 = np.matrix(cc)
+    print(f'{m1}')
+    print(f'{m1.std()} {m1.mean()}')
