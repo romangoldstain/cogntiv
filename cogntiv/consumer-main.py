@@ -11,3 +11,14 @@ if __name__ == '__main__':
     analyzer = MatrixAnalyzer()
     Receiver(SocketTransferClient('localhost', 6000), bus).start()
     MatrixWorker(bus, 100, analyzer).start().join()
+
+
+"""
+Back-pressure path
+1. Consumer - file write won't keep up.
+2. Consumer - messages bus fills up.
+3. Consumer - recv. buffer socket fill up.
+4. Producer - send buffer socket fills up.
+5. Producer - dispatcher blocks.
+6. Producer - bus fills up; No new vectors created. 
+"""
