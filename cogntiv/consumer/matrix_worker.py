@@ -41,6 +41,8 @@ class MatrixWorker:
 
             # Create artifacts for the consumer - stats and analytics dictionaries.
 
+            print(f'New matrix acquired @ {actual_rate}msg/sec')
+
             rate_stats = {
                 'rate': actual_rate,
                 'rate_mean': self.stats.mean(),
@@ -54,6 +56,10 @@ class MatrixWorker:
 
 
 class MatrixBuilder:
+    """
+    Constructs matrices based on incoming vectors.
+    The class uses backing array in a cycling manner (not thread safe)
+    """
 
     def __init__(self, vectors_per_matrix):
         self.backing_array = [None] * vectors_per_matrix

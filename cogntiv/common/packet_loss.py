@@ -4,8 +4,15 @@ import numpy as np
 
 
 class LossPolicy(ABC):
+    """
+    Defines the policy according which packets (message) loss is happening.
+    """
+
     @abstractmethod
     def should_loose(self):
+        """
+        Indicates whether the upcoming message should be dropped (lost) or not.
+        """
         pass
 
     @staticmethod
@@ -17,12 +24,12 @@ class LossPolicy(ABC):
         return OneWithinInterval(lower, upper)
 
 
-class Never(LossPolicy, ABC):
+class Never(LossPolicy):
     def should_loose(self):
         return False
 
 
-class OneWithinInterval(LossPolicy, ABC):
+class OneWithinInterval(LossPolicy):
     def __init__(self, lower, upper):
         self.lower = lower
         self.upper = upper

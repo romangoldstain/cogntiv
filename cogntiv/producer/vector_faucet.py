@@ -2,6 +2,9 @@ import threading
 
 
 class VectorFaucet:
+    """
+    Responsible for constantly creating new vectors and posting them to given message bus.
+    """
 
     def __init__(self, vector_factory, bus):
         self.vector_factory = vector_factory
@@ -13,14 +16,14 @@ class VectorFaucet:
             return
         
         self.running = True
-        th = threading.Thread(target=self._streamout, daemon=True, args=())
+        th = threading.Thread(target=self.keep_em_running, daemon=True, args=())
         th.start()
         return th
 
     def stop(self):
         self.running = False
 
-    def _streamout(self):
+    def keep_em_running(self):
         while self.running:
             vector = self.vector_factory.create()
             self.bus.put(vector)

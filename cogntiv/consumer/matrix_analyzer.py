@@ -1,5 +1,8 @@
-
 class MatrixAnalyzer:
+    """
+    Accepts collected matrices and returns calculated analytics artifacts.
+    """
+
     def __init__(self):
         pass
 

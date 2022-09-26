@@ -4,11 +4,20 @@ from common.message import Message
 
 
 class Dispatcher:
+    """
+    Responsible for dispatching arriving objects into potentially open transfer connected.
+    The dispatching tries to respect required target rate (messages per second).
+    TODO:
+    wait timeout
+    error handling
+    proper closing and thread termination
+    """
 
-    def __init__(self, transfer, monitor, bus):
+    def __init__(self, transfer, monitor, bus, target_rate=1000):
         self.transfer = transfer
         self.monitor = monitor
         self.bus = bus
+        self.target_rate_interval = 1.0 / target_rate
         self.running = False
         self.nextMessageSeq = 1
 
@@ -50,7 +59,7 @@ class Dispatcher:
                 # to experience gap in the input stream.
 
                 now = time.perf_counter()
-                if now - last_sent_at >= 0.001:
+                if now - last_sent_at >= self.target_rate_interval:
 
                     success = self.transfer.send(msg)
                     self.monitor.add_event()
@@ -62,19 +71,10 @@ class Dispatcher:
                 if success:
 
                     self.nextMessageSeq += 1
-                    if self.nextMessageSeq % 5 == 0:
+                    if self.nextMessageSeq % 100 == 0:  # debug
                         print(f"sent #{self.nextMessageSeq} at {self.monitor.get_avg_rate_per_sec()} msg/sec")
 
                 else:
                     unsent_msg = msg
                     if not self.transfer.is_ready():
                         break
-
-                # self.bus.task_done()  # The vector is out of the bus any way
-                # time.sleep(0.2)
-
-
-"""
-retry
-wait timeout
-"""

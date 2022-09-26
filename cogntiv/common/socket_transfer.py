@@ -2,8 +2,13 @@ import time
 from multiprocessing.connection import Listener
 from multiprocessing.connection import Client
 
+"""
+Transfer implementation based on sockets. 
+TODO: consider defining abstract types for client/server along relevant factory.
+"""
 
-class SocketTransfer:
+
+class ServerSocketTransfer:
 
     def __init__(self, address, port, loss_policy):
         self.listener = Listener((address, port))

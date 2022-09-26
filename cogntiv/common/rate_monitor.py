@@ -2,6 +2,9 @@ import time
 
 
 class RateMonitor:
+    """
+    Tracks average rate - events per second.
+    """
 
     def __init__(self):
         self.start_time = time.perf_counter()

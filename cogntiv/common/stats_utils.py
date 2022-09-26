@@ -2,6 +2,12 @@ import math
 
 
 class StatsHelper:
+    """
+    Tracks statistic counters for specific stream of values.
+    The facility allows online updates of mean and std upon newly observed value without the need of
+    complete value stream history.
+    """
+
     def __init__(self):
         self._count = 0
         self._mean = 0
