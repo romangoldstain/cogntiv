@@ -1,17 +1,17 @@
 import threading
 import numpy as np
 from common.stats_utils import StatsHelper
-from consumer.matrix_datum import MatrixDatum
 
 NONE_TUPLE = None, None
 
 
 class MatrixWorker:
 
-    def __init__(self, bus, vectors_per_matrix, matrix_processor):
+    def __init__(self, bus, vectors_per_matrix, matrix_analyzer, consumer):
         self.bus = bus
         self.matrix_builder = MatrixBuilder(vectors_per_matrix)
-        self.matrix_processor = matrix_processor
+        self.matrix_analyzer = matrix_analyzer
+        self.consumer = consumer
         self.running = False
         self.stats = StatsHelper()
 
@@ -35,12 +35,22 @@ class MatrixWorker:
                 continue
             # else - we got ourselves a brand-new matrix!
 
-            # calculate effective rate and accumulating mean and std
+            # Calculate effective rate, mean and std
             actual_rate = len(matrix) / acq_duration
             self.stats.add_value(actual_rate)
 
-            print(f'Got new matrix! rate={actual_rate} mean={self.stats.mean()} std={self.stats.std()}')
-            self.matrix_processor.accept(MatrixDatum(matrix, self.stats.mean(), self.stats.std()))
+            # Create artifacts for the consumer - stats and analytics dictionaries.
+
+            rate_stats = {
+                'rate': actual_rate,
+                'rate_mean': self.stats.mean(),
+                'rage_std': self.stats.std()
+            }
+            # TODO: consider using ordered dictionary, as order of iteration is not guaranteed.
+
+            analytics = self.matrix_analyzer.analyze(matrix)
+
+            self.consumer.accept(rate_stats, analytics)
 
 
 class MatrixBuilder:

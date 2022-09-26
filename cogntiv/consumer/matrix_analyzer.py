@@ -1,10 +1,11 @@
-class MatrixAnalyzer:
 
+class MatrixAnalyzer:
     def __init__(self):
         pass
 
-    def accept(self, matrix):
-        std = matrix.matrix.std()
-        mean = matrix.matrix.mean()
-
-        print(f'mean={mean} std={std}')
+    def analyze(self, matrix):
+        return {
+            'mean': matrix.mean(0)[0].tolist()[0],
+            'std': matrix.std(0)[0].tolist()[0]
+        }
+    # TODO: consider using ordered dictionary, as order of iteration is not guaranteed.
