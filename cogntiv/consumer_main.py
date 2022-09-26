@@ -6,14 +6,14 @@ from consumer.matrix_analyzer import MatrixAnalyzer
 from consumer.csv_writer import CSVWriter
 
 
-def start_consumer():
+def start_consumer(transfer):
     bus = queue.Queue(100)
 
     analyzer = MatrixAnalyzer()
     consumer = CSVWriter()
-    Receiver(SocketTransferClient('localhost', 6000), bus).start()
+    Receiver(transfer, bus).start()
     MatrixWorker(bus, 100, analyzer, consumer).start().join()
 
 
 if __name__ == '__main__':
-    start_consumer()
+    start_consumer(SocketTransferClient('localhost', 6000))
