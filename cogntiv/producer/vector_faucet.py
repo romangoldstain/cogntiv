@@ -3,7 +3,8 @@ import threading
 
 class VectorFaucet:
     """
-    Responsible for constantly creating new vectors and posting them to given message bus.
+    Responsible for constantly creating new vectors and posting them to provided message bus.
+    The faucet suspends when the bus cannot accept newly generated vectors.
     """
 
     def __init__(self, vector_factory, bus):

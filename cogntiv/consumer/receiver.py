@@ -21,8 +21,6 @@ class Receiver:
     def _read_and_accept(self):
         """
         Reads incoming message from the transfer and adds it to currently pending data aggregation block.
-        Ideally, detaching from the reading thread should occur as fast as possible, but since the spec requires
-        transfer rate data along the matrix we'll have to aggregate on the current thread.
         """
 
         last_message_seq = -1

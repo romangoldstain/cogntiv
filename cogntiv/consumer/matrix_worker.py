@@ -7,6 +7,9 @@ NONE_TUPLE = None, None
 
 
 class MatrixWorker:
+    """
+    Accepts matrices arriving from the bus, processes them and passes the outcome to given consumer.
+    """
 
     def __init__(self, bus, vectors_per_matrix, matrix_analyzer, consumer):
         self.bus = bus

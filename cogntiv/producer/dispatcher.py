@@ -6,8 +6,8 @@ from common.message import Message
 
 class Dispatcher:
     """
-    Responsible for dispatching arriving objects into potentially open transfer connected.
-    The dispatching tries to respect required target rate (messages per second).
+    Dispatches objects arriving though from the object bus over potentially open transfer to remote consumer.
+    Dispatching tries to respect required target rate (messages per second).
     TODO:
     wait timeout
     error handling
