@@ -1,3 +1,4 @@
+import logging
 import threading
 import time
 from common.message import Message
@@ -72,7 +73,7 @@ class Dispatcher:
 
                     self.nextMessageSeq += 1
                     if self.nextMessageSeq % 100 == 0:  # debug
-                        print(f"sent #{self.nextMessageSeq} at {self.monitor.get_avg_rate_per_sec()} msg/sec")
+                        logging.info('sent #%d at %.2f msg/sec', self.nextMessageSeq, self.monitor.get_avg_rate_per_sec())
 
                 else:
                     unsent_msg = msg

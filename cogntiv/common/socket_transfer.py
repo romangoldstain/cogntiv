@@ -1,4 +1,5 @@
 import time
+import logging
 from multiprocessing.connection import Listener
 from multiprocessing.connection import Client
 
@@ -20,15 +21,15 @@ class ServerSocketTransfer:
 
     def wait_for_ready(self):
 
-        print("Waiting for connection...")
+        logging.info("Waiting for connection...")
 
         try:
             self.conn = self.listener.accept()
             self.connected_at = time.perf_counter()
-            print('Connection accepted from', self.listener.last_accepted)
+            logging.info('Connection accepted from %s', self.listener.last_accepted)
         except OSError:
             if not self.isClosed:
-                print("Exception while accepting new connection")
+                logging.error("Exception while accepting new connection")
                 self.listener.close()
             # else - that's fine, the transfer was explicitly closed.
 
@@ -43,14 +44,14 @@ class ServerSocketTransfer:
 
         if self.loss_policy.should_loose():
             self.loss_count += 1
-            print(f'Packet loss :( so far - {self.loss_count} messages lost')
+            logging.warning('Packet loss :( so far - %d messages lost', self.loss_count)
             return True
 
         try:
             self.conn.send(message)
             return True
         except ConnectionError:
-            print("Connection broken :(")
+            logging.info("Connection broken :(")
             self.conn = None
             return False
 
@@ -69,15 +70,15 @@ class SocketTransferClient:
 
     def wait_for_ready(self):
 
-        print("Connecting...")
+        logging.info("Connecting...")
 
         try:
             self.conn = Client(self.address)
             self.connected_at = time.perf_counter()
-            print('Connection established.')
+            logging.info('Connection established.')
         except OSError:
             if not self.isClosed:
-                print("Exception while accepting new connection")
+                logging.error("Exception while accepting new connection")
             # else - that's fine, the transfer was explicitly closed.
 
     def close(self):
@@ -92,7 +93,7 @@ class SocketTransferClient:
         try:
             return self.conn.recv()
         except ConnectionResetError:
-            print("Connection broken :(")
+            logging.error("Connection broken :(")
             self.conn = None
             return None
 

@@ -1,21 +1,24 @@
 import queue
 import time
 import csv
+import sys
 import numpy as np
 import datetime
+import logging
+
+
 
 if __name__ == '__main__':
-
-    x = np.matrix(np.arange(12).reshape((3, 4)))
-    ll = x.std(0)[0].tolist()
-
-    m = {'key1': 'value1', 'key2': 'value2'}
-    print(f'out={m.values()}')
-
-    arr = [1, 2, 3]
-    arr.extend(ll)
-    print(f'out={arr}')
-
-    print(datetime.datetime.now().strftime("%Y%m%d_%H%M_%S_results"))
-
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s- %(levelname)s [%(thread)s] %(message)s",
+        handlers=[
+            # logging.FileHandler("debug.log"),
+            logging.StreamHandler(sys.stdout)
+        ]
+    )
+    logging.debug('This message is skipped as a level is set as INFO')
+    logging.info('So should this')
+    logging.warning('And this, too')
+    logging.error('Testing non-ASCII character, Ø and ö')
 

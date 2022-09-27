@@ -1,3 +1,4 @@
+import logging
 import threading
 import numpy as np
 from common.stats_utils import StatsHelper
@@ -41,7 +42,7 @@ class MatrixWorker:
 
             # Create artifacts for the consumer - stats and analytics dictionaries.
 
-            print(f'New matrix acquired @ {actual_rate}msg/sec')
+            logging.info('New matrix acquired @ %.2fmsg/sec', actual_rate)
 
             rate_stats = {
                 'rate': actual_rate,

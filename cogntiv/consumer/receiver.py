@@ -1,5 +1,6 @@
 import threading
 import time
+import logging
 
 
 class Receiver:
@@ -42,7 +43,7 @@ class Receiver:
                 if last_message_seq != -1:
                     seq_delta = msg.seq - last_message_seq
                     if seq_delta > 1:
-                        print(f'Packet loss detected! {seq_delta} messages are absent prior to sequence {msg.seq}')
+                        logging.info('Packet loss detected! %d messages are absent prior to sequence %d', seq_delta, msg.seq)
 
                 last_message_seq = msg.seq
 

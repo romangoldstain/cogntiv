@@ -1,4 +1,5 @@
 import csv
+import logging
 import datetime
 
 
@@ -14,7 +15,7 @@ class CSVWriter:
         self.writer = csv.writer(self.file)
         self.rows = 0
         # might throw
-        print(f'Writing to result file: {filename}')
+        logging.info('Writing to result file:%s', filename)
 
     def accept(self, rate_stats, matrix_analytics):
 

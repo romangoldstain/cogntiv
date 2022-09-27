@@ -1,4 +1,5 @@
 import sys
+import logging
 from multiprocessing import Process
 import consumer_main
 import producer_main
@@ -8,7 +9,7 @@ from common.packet_loss import LossPolicy
 
 def pick_loss_policy():
     if len(sys.argv) >= 2 and sys.argv[1] == '--noisy':
-        print(f'Noisy mode ON')
+        logging.info('Noisy mode ON')
         return LossPolicy.within_interval(2, 3)
 
     return LossPolicy.never()
@@ -17,7 +18,6 @@ def pick_loss_policy():
 TCP_PORT = 6000
 
 if __name__ == '__main__':
-
     """
     Spawn consumer and producer processes.
     """
