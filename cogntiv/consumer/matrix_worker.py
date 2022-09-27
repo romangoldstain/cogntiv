@@ -45,12 +45,12 @@ class MatrixWorker:
 
             # Create artifacts for the consumer - stats and analytics dictionaries.
 
-            logging.info('New matrix acquired @ %.2fmsg/sec', actual_rate)
+            logging.info('New matrix acquired @ %.2f msg/sec', actual_rate)
 
             rate_stats = {
                 'rate': actual_rate,
                 'rate_mean': self.stats.mean(),
-                'rage_std': self.stats.std()
+                'rate_std': self.stats.std()
             }
             # TODO: consider using ordered dictionary, as order of iteration is not guaranteed.
 

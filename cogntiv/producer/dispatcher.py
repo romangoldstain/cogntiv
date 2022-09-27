@@ -73,7 +73,7 @@ class Dispatcher:
 
                     self.nextMessageSeq += 1
                     if self.nextMessageSeq % 100 == 0:  # debug
-                        logging.info('sent #%d at %.2f msg/sec', self.nextMessageSeq, self.monitor.get_avg_rate_per_sec())
+                        logging.debug('Sent message #%d at %.2f msg/sec', self.nextMessageSeq, self.monitor.get_avg_rate_per_sec())
 
                 else:
                     unsent_msg = msg
