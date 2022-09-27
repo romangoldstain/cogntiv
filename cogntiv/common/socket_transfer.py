@@ -29,7 +29,7 @@ class ServerSocketTransfer:
             logging.info('Connection accepted from %s', self.listener.last_accepted)
         except OSError:
             if not self.isClosed:
-                logging.error("Exception while accepting new connection")
+                logging.exception("Exception while accepting new connection")
                 self.listener.close()
             # else - that's fine, the transfer was explicitly closed.
 
@@ -51,7 +51,7 @@ class ServerSocketTransfer:
             self.conn.send(message)
             return True
         except ConnectionError:
-            logging.info("Connection broken :(")
+            logging.exception("Connection broken :(")
             self.conn = None
             return False
 
@@ -78,7 +78,7 @@ class SocketTransferClient:
             logging.info('Connection established.')
         except OSError:
             if not self.isClosed:
-                logging.error("Exception while accepting new connection")
+                logging.exception("Exception while accepting new connection")
             # else - that's fine, the transfer was explicitly closed.
 
     def close(self):
@@ -93,7 +93,7 @@ class SocketTransferClient:
         try:
             return self.conn.recv()
         except ConnectionResetError:
-            logging.error("Connection broken :(")
+            logging.exception("Connection was broken while receiving data :(")
             self.conn = None
             return None
 
